@@ -13,7 +13,6 @@ module.exports = {
   plugins: ["@typescript-eslint"],
   rules: {
     indent: ["warn", 2],
-    "linebreak-style": ["warn", "unix"],
     semi: ["warn", "always"],
     "@typescript-eslint/no-unused-vars": [
       "warn",
