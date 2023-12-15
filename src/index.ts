@@ -3,6 +3,7 @@ import compression from "compression";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import { errorHandler } from "@/services/error/handlers";
 import { authRouters } from "@/services/auth/router";
 
 // create express instance
@@ -38,6 +39,9 @@ app.use("*", (req, res) =>
     message: `endpoint ${req.originalUrl} doesn't exists!`,
   })
 );
+
+// global internal error handler
+app.use(errorHandler);
 
 // run express
 const port = parseInt(process.env.PORT ?? "0");
