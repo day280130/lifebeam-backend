@@ -28,7 +28,7 @@ export const authCheck: ReqHandler = async (req, res, next) => {
     // check access token
     const accessToken = authorizationStrings[1] ?? "";
     const auth = getAuth(firebaseApp);
-    const verifiedToken = await auth.verifyIdToken(accessToken);
+    const verifiedToken = await auth.verifyIdToken(accessToken, true);
     req.token = {
       raw: accessToken,
       decoded: verifiedToken,
