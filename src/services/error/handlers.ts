@@ -1,4 +1,6 @@
-import type { ErrorRequestHandler } from "express";
+import { isFirebaseError } from "@/lib/firebase";
+import type { DefaultResponseBody } from "@/lib/utils";
+import type { ErrorRequestHandler, Response } from "express";
 
 type ArbitraryObject = { [key: string]: unknown };
 
@@ -22,20 +24,29 @@ const isErrnoException = (error: unknown): error is NodeJS.ErrnoException => {
 export const errorHandler: ErrorRequestHandler = (
   error: NodeJS.ErrnoException | Error,
   req,
-  res,
+  res: Response<DefaultResponseBody>,
   _next
 ) => {
+  // set response status code to 500
+  res.status(500);
+
+  // catch firebase error
+  if (isFirebaseError(error)) {
+    return res.json({
+      message: "unknown firebase error",
+      error: error.toJSON(),
+    });
+  }
+
   // catch nodejs error
   if (isErrnoException(error)) {
     return res.json({
-      status: "error",
       message: "internal nodejs error",
     });
   }
 
   // last fallback, catch unknown error
   return res.json({
-    status: "error",
     message: "unknown internal error",
   });
 };
