@@ -29,13 +29,11 @@ app.use(authRouters);
 // basic endpoints
 app.get("/", (_req, res) =>
   res.status(200).json({
-    status: "success",
     message: "api ok!",
   })
 );
 app.use("*", (req, res) =>
   res.status(404).json({
-    status: "error",
     message: `endpoint ${req.originalUrl} doesn't exists!`,
   })
 );
