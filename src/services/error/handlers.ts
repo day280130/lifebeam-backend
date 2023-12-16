@@ -1,4 +1,5 @@
 import { isFirebaseError } from "@/lib/firebase";
+import { isPrismaError } from "@/lib/prisma";
 import type { DefaultResponseBody } from "@/lib/utils";
 import type { ErrorRequestHandler, Response } from "express";
 
@@ -35,6 +36,14 @@ export const errorHandler: ErrorRequestHandler = (
     return res.json({
       message: "unknown firebase error",
       error: error.toJSON(),
+    });
+  }
+
+  // catch prisma error
+  if (isPrismaError(error)) {
+    return res.json({
+      message: "unknown prisma error",
+      error,
     });
   }
 
