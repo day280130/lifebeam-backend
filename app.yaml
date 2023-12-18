@@ -1,0 +1,7 @@
+runtime: nodejs20
+service: backend
+env_variables:
+  FIREBASE_PROJECT_ID:
+  FIREBASE_CLIENT_EMAIL:
+  FIREBASE_PRIVATE_KEY:
+  DATABASE_URL:
