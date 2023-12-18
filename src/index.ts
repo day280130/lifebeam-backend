@@ -5,6 +5,10 @@ import express from "express";
 import helmet from "helmet";
 import { errorHandler } from "@/services/error/handlers";
 import { authRouters } from "@/services/auth/router";
+import { foodRouters } from "@/services/food/router";
+import { exerciseRouters } from "@/services/exercise/router";
+import { biWeeklyRouters } from "@/services/logbook/bi-weekly/router";
+import { dailyRouters } from "@/services/logbook/daily/router";
 
 // create express instance
 const app = express();
@@ -25,6 +29,10 @@ app.use(compression()); // compresses request and response
 
 // routers
 app.use(authRouters);
+app.use(foodRouters);
+app.use(exerciseRouters);
+app.use(biWeeklyRouters);
+app.use(dailyRouters);
 
 // basic endpoints
 app.get("/", (_req, res) =>
