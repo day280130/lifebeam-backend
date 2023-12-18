@@ -14,7 +14,7 @@ const mockGet: ReqHandler = (req, res) => {
   });
 };
 
-export const exerciseRouters = Router();
+export const biWeeklyRouters = Router();
 
 const BASE_ENDPOINT = "/logbook/bi-weekly";
-exerciseRouters.get(`${BASE_ENDPOINT}/:id`, authCheck, mockGet);
+biWeeklyRouters.get(`${BASE_ENDPOINT}/:id`, authCheck, mockGet);
