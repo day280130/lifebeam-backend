@@ -10,12 +10,112 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Test {
-  id         String   @id @default(uuid()) @map("test_id")
-  tag        String?
-  testString String   @map("test_string")
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+model User {
+  uid        String     @id @map("user_id") @db.VarChar(36)
+  role       Role       @default(USER)
+  gender     Gender
+  age        Int
+  biWeeklies BiWeekly[]
+  diets      Diet[]
+  activities Activity[]
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+
+  @@map("user")
+}
+
+model BiWeekly {
+  weekTime  String   @map("week_time") @db.Char(7)
+  userId    String   @map("user_id") @db.VarChar(36)
+  user      User     @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  height    Float
+  weight    Float
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@id([weekTime, userId])
+  @@map("bi-weekly")
+}
+
+model Food {
+  id            String       @id @default(uuid()) @map("food_id")
+  name          String       @map("food_name") @db.VarChar(100)
+  calorieAmount Float        @map("calorie_amount")
+  diets         FoodOnDiet[]
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  @@map("food")
+}
+
+model Diet {
+  dateTime  String       @map("date_time") @db.Char(10)
+  userId    String       @map("user_id") @db.VarChar(36)
+  user      User         @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  foods     FoodOnDiet[]
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  @@id([dateTime, userId])
+  @@map("diet")
+}
+
+model FoodOnDiet {
+  userId    String   @map("user_id") @db.VarChar(36)
+  dateTime  String   @map("date_time") @db.Char(10)
+  diet      Diet     @relation(fields: [userId, dateTime], references: [userId, dateTime], onDelete: Cascade)
+  foodId    String   @default(uuid()) @map("food_id")
+  food      Food     @relation(fields: [foodId], references: [id], onDelete: NoAction)
+  amount    Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@id([userId, dateTime, foodId])
+  @@map("food_on_diet")
+}
+
+model Exercise {
+  id            String               @id @default(uuid()) @map("exercise_id")
+  name          String               @map("exercise_name") @db.VarChar(100)
+  unit          String               @db.VarChar(20)
+  calorieBurned Float                @map("calorie_burned")
+  activities    ExerciseOnActivity[]
+  createdAt     DateTime             @default(now()) @map("created_at")
+  updatedAt     DateTime             @updatedAt @map("updated_at")
+
+  @@map("exercise")
+}
+
+model Activity {
+  dateTime  String               @map("date_time") @db.Char(10)
+  userId    String               @map("user_id") @db.VarChar(36)
+  user      User                 @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  exercises ExerciseOnActivity[]
+  createdAt DateTime             @default(now()) @map("created_at")
+
+  @@id([dateTime, userId])
+  @@map("activity")
+}
+
+model ExerciseOnActivity {
+  userId     String   @map("user_id") @db.VarChar(36)
+  dateTime   String   @map("date_time") @db.Char(10)
+  activity   Activity @relation(fields: [userId, dateTime], references: [userId, dateTime], onDelete: Cascade)
+  exerciseId String   @default(uuid()) @map("exercise_id")
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: NoAction)
+  amount     Int
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
-  @@map("test")
+  @@id([userId, dateTime, exerciseId])
+  @@map("exercise_on_activity")
 }
