@@ -40,7 +40,7 @@ const postDiet: ReqHandler = async (req, res, next) => {
           field = "user is";
         }
         if (error.meta?.field_name === "food_id") {
-          field = "some of the food are";
+          field = "some of the foods are";
         }
         return res.status(400).json({
           message: `${field} not registered in database`,
@@ -98,9 +98,54 @@ const putDiet: ReqHandler = async (req, res, next) => {
 
     const reqBodyFoodIds = reqBody.data.diets.map(entry => entry.foodId);
 
-    const deletedDietEntries = currentDiet.foods.filter(
+    const deletedFoodEntries = currentDiet.foods.filter(
       entry => !reqBodyFoodIds.includes(entry.food.id)
     );
+
+    const upserts = reqBody.data.diets.map(entry =>
+      prisma.foodOnDiet.upsert({
+        where: {
+          userId_dateTime_foodId: {
+            foodId: entry.foodId,
+            userId: reqParams.data.id.userId,
+            dateTime: reqParams.data.id.dateTime,
+          },
+        },
+        update: { amount: entry.amount },
+        create: {
+          ...entry,
+          ...reqParams.data.id,
+        },
+      })
+    );
+
+    const upsertResults = await Promise.allSettled(upserts);
+
+    if (
+      upsertResults.filter(upsert => upsert.status === "rejected").length > 0
+    ) {
+      const rollbacks = currentDiet.foods.map(entry =>
+        prisma.foodOnDiet.upsert({
+          where: {
+            userId_dateTime_foodId: {
+              foodId: entry.food.id,
+              userId: reqParams.data.id.userId,
+              dateTime: reqParams.data.id.dateTime,
+            },
+          },
+          update: { amount: entry.amount },
+          create: {
+            foodId: entry.food.id,
+            amount: entry.amount,
+            ...reqParams.data.id,
+          },
+        })
+      );
+      await Promise.allSettled(rollbacks);
+      return res.status(400).json({
+        message: "some of the foods are not registered in database",
+      });
+    }
 
     await prisma.diet.update({
       where: {
@@ -109,18 +154,8 @@ const putDiet: ReqHandler = async (req, res, next) => {
       data: {
         foods: {
           deleteMany: {
-            foodId: { in: deletedDietEntries.map(entry => entry.food.id) },
+            foodId: { in: deletedFoodEntries.map(entry => entry.food.id) },
           },
-          upsert: reqBody.data.diets.map(entry => ({
-            where: {
-              userId_dateTime_foodId: {
-                foodId: entry.foodId,
-                ...reqParams.data.id,
-              },
-            },
-            update: { amount: entry.amount },
-            create: entry,
-          })),
         },
       },
     });
