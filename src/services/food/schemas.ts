@@ -13,8 +13,8 @@ const putBody = base.omit({ id: true }).partial();
 const params = base.pick({ id: true });
 
 const queries = z.object({
-  limit: z.number().default(Number.MAX_SAFE_INTEGER),
-  page: z.number().default(0),
+  limit: z.coerce.number().default(Number.MAX_SAFE_INTEGER),
+  page: z.coerce.number().default(0),
 });
 
 export const foodSchemas = { base, postBody, putBody, params, queries };
