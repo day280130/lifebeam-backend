@@ -19,7 +19,7 @@ const postUser: RequestHandler = async (req, res, next) => {
 
     await prisma.user.create({
       data: {
-        uid: req.token?.decoded.uid,
+        uid: req.token.decoded.uid,
         ...inputBody.data,
       },
     });
