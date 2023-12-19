@@ -68,7 +68,7 @@ const putDiet: ReqHandler = async (req, res, next) => {
       });
     }
 
-    const reqBody = dietSchemas.putBody.safeParse(req.params);
+    const reqBody = dietSchemas.putBody.safeParse(req.body);
     if (!reqBody.success) {
       return res.status(400).json({
         message: responseMessages.error.reqBody,
