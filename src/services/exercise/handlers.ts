@@ -16,10 +16,9 @@ const postExercise: ReqHandler = async (req, res, next) => {
       data: inputBody.data,
     });
 
-    const safeInsertResult = exerciseSchemas.base.parse(insertResult);
     return res.status(201).json({
       message: responseMessages.success.post,
-      id: safeInsertResult.id,
+      id: insertResult.id,
     });
   } catch (error) {
     next(error);
