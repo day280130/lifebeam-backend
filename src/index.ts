@@ -6,6 +6,7 @@ import helmet from "helmet";
 import { errorHandler } from "@/services/error/handlers";
 import { authRouters } from "@/services/auth/router";
 import { foodRouters } from "./services/food/router";
+import { exerciseRouters } from "./services/exercise/router";
 
 // create express instance
 const app = express();
@@ -27,6 +28,7 @@ app.use(compression()); // compresses request and response
 // routers
 app.use(authRouters);
 app.use(foodRouters);
+app.use(exerciseRouters);
 
 // basic endpoints
 app.get("/", (_req, res) =>
