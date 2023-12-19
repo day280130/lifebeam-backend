@@ -5,8 +5,10 @@ const base = z.object({
     .string()
     .refine(val => /^[a-zA-Z0-9]{1,36}-\d{4}-\d{2}$/.test(val))
     .transform(val => {
-      const userId = val.split("-")[0] ?? "";
-      const weekTime = val.split("-").splice(0, 1).join("-");
+      const idSplitted = val.split("-");
+      const userId = idSplitted[0] ?? "";
+      idSplitted.splice(0, 1);
+      const weekTime = idSplitted.join("-");
       return { userId, weekTime };
     }),
   height: z.number(),
