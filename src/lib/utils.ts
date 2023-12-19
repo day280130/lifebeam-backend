@@ -17,3 +17,19 @@ export type UserToken =
   | undefined;
 
 export type ReqHandler = RequestHandler<ParamsDictionary, DefaultResponseBody>;
+
+export const responseMessages = {
+  success: {
+    getAll: "datas found",
+    get: "data found",
+    post: "data posted",
+    put: "data edited",
+    delete: "data deleted",
+  },
+  error: {
+    unAuthorized: "illegal auth check bypass",
+    reqBody: "request body not valid",
+    reqParams: "request parameter/url shape not valid",
+    notFound: "data not found",
+  },
+} as const;
