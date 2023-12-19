@@ -33,6 +33,14 @@ const postDiet: ReqHandler = async (req, res, next) => {
       message: responseMessages.success.post,
     });
   } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === "P2003") {
+        return res.status(400).json({
+          message: "user not registered in database",
+          error,
+        });
+      }
+    }
     next(error);
   }
 };
