@@ -29,7 +29,8 @@ export const responseMessages = {
   error: {
     unAuthorized: "illegal auth check bypass",
     reqBody: "request body not valid",
-    reqParams: "request parameter/url shape not valid",
+    reqParams: "request parameter shape not valid",
+    reqQueries: "request query shape not valid",
     notFound: "data not found",
   },
 } as const;

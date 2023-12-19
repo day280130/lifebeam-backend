@@ -22,6 +22,35 @@ const postFood: ReqHandler = async (req, res, next) => {
     next(error);
   }
 };
+const getFoods: ReqHandler = async (req, res, next) => {
+  try {
+    const reqQueries = foodSchemas.queries.safeParse(req.query);
+    if (!reqQueries.success) {
+      return res.status(400).json({
+        message: responseMessages.error.reqQueries,
+      });
+    }
+
+    const foods = await prisma.food.findMany({
+      select: { id: true, name: true, calorieAmount: true },
+      skip: reqQueries.data.page * reqQueries.data.limit,
+      take: reqQueries.data.limit,
+    });
+    const foodsCount = await prisma.food.count();
+    const maxPage = Math.ceil(foodsCount / reqQueries.data.limit) - 1;
+
+    return res.status(200).json({
+      message: responseMessages.success.getAll,
+      foods,
+      pagination: {
+        ...reqQueries.data,
+        maxPage,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const getFood: ReqHandler = async (req, res, next) => {
   try {
@@ -122,4 +151,5 @@ export const foodHandlers = {
   putFood,
   postFood,
   getFood,
+  getFoods,
 };

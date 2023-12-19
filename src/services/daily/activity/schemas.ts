@@ -13,4 +13,4 @@ const postBody = z.object({
 
 const putBody = postBody.omit({ dateTime: true });
 
-export const dietSchemas = { postBody, putBody };
+export const activitySchemas = { postBody, putBody };

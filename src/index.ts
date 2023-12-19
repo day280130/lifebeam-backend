@@ -5,6 +5,7 @@ import express from "express";
 import helmet from "helmet";
 import { errorHandler } from "@/services/error/handlers";
 import { authRouters } from "@/services/auth/router";
+import { dailyRouters } from "@/services/daily/router";
 import { foodRouters } from "./services/food/router";
 import { exerciseRouters } from "./services/exercise/router";
 import { userRouters } from "./services/user/router";
@@ -28,6 +29,7 @@ app.use(compression()); // compresses request and response
 
 // routers
 app.use(authRouters);
+app.use(dailyRouters);
 app.use(foodRouters);
 app.use(exerciseRouters);
 app.use(userRouters);
