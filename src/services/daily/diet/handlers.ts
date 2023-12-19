@@ -96,7 +96,7 @@ const putDiet: ReqHandler = async (req, res, next) => {
                 ...reqParams.data.id,
               },
             },
-            update: entry,
+            update: { amount: entry.amount },
             create: entry,
           })),
         },
