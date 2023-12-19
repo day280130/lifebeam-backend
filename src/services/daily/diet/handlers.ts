@@ -33,14 +33,27 @@ const postDiet: ReqHandler = async (req, res, next) => {
       message: responseMessages.success.post,
     });
   } catch (error) {
-    if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code === "P2003"
-    ) {
-      return res.status(400).json({
-        message: "user not registered in database",
-        error,
-      });
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === "P2003") {
+        let field = "UNKNOWN FIELD is";
+        if (error.meta?.target === "PRIMARY") {
+          field = "user is";
+        }
+        if (error.meta?.field_name === "food_id") {
+          field = "some of the food are";
+        }
+        return res.status(400).json({
+          message: `${field} not registered in database`,
+          error,
+        });
+      }
+      if (error.code === "P2002") {
+        return res.status(400).json({
+          message:
+            "diet entry for this user at provided dateTime has already registered in database",
+          error,
+        });
+      }
     }
     next(error);
   }
