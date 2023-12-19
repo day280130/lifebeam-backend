@@ -13,7 +13,9 @@ const base = z.object({
   weight: z.number(),
 });
 
-const postBody = base.omit({ id: true });
+const postBody = base.omit({ id: true }).extend({
+  weekTime: z.string().refine(val => /^\d{4}-\d{2}$/.test(val)),
+});
 
 const putBody = base.omit({ id: true }).partial();
 
