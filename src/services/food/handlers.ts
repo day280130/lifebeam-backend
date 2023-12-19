@@ -1,6 +1,6 @@
 import { responseMessages, type ReqHandler } from "@/lib/utils";
 import { foodSchemas } from "./schemas";
-import { prisma } from "@/lib/prisma";
+import { PrismaClientKnownRequestError, prisma } from "@/lib/prisma";
 
 const postFood: ReqHandler = async (req, res, next) => {
   try {
@@ -67,20 +67,23 @@ const putFood: ReqHandler = async (req, res, next) => {
         message: responseMessages.error.reqBody,
       });
     }
-    const updateResult = await prisma.food.update({
+    await prisma.food.update({
       where: { id: paramId.data.id },
       data: inputBody.data,
     });
-    if (!updateResult) {
-      return res.status(404).json({
-        message: responseMessages.error.notFound,
-      });
-    }
 
     return res.status(200).json({
       message: responseMessages.success.put,
     });
   } catch (error) {
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      return res.status(404).json({
+        message: responseMessages.error.notFound,
+      });
+    }
     next(error);
   }
 };
@@ -94,24 +97,27 @@ const deleteFood: ReqHandler = async (req, res, next) => {
       });
     }
 
-    const deleteResult = await prisma.food.delete({
+    await prisma.food.delete({
       where: { id: paramId.data.id },
     });
-    if (!deleteResult) {
-      return res.status(404).json({
-        message: responseMessages.error.notFound,
-      });
-    }
 
     return res.status(200).json({
       message: responseMessages.success.delete,
     });
   } catch (error) {
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      return res.status(404).json({
+        message: responseMessages.error.notFound,
+      });
+    }
     next(error);
   }
 };
 
-export const foodHandler = {
+export const foodHandlers = {
   deleteFood,
   putFood,
   postFood,
