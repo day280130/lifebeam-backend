@@ -6,7 +6,6 @@ import helmet from "helmet";
 import { errorHandler } from "@/services/error/handlers";
 import { authRouters } from "@/services/auth/router";
 import { foodRouters } from "./services/food/router";
-import { exerciseHandlers } from "./services/exercise/handlers";
 import { exerciseRouters } from "./services/exercise/router";
 
 // create express instance
