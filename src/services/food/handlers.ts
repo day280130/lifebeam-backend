@@ -37,7 +37,8 @@ const getFoods: ReqHandler = async (req, res, next) => {
       take: reqQueries.data.limit,
     });
     const foodsCount = await prisma.food.count();
-    const maxPage = Math.ceil(foodsCount / reqQueries.data.limit) - 1;
+    const maxPage =
+      foodsCount === 0 ? foodsCount : Math.ceil(foodsCount / reqQueries.data.limit) - 1;
 
     return res.status(200).json({
       message: responseMessages.success.getAll,
@@ -90,7 +91,7 @@ const putFood: ReqHandler = async (req, res, next) => {
         message: responseMessages.error.reqParams,
       });
     }
-    const inputBody = foodSchemas.postBody.safeParse(req.body);
+    const inputBody = foodSchemas.putBody.safeParse(req.body);
     if (!inputBody.success) {
       return res.status(400).json({
         message: responseMessages.error.reqBody,
@@ -105,10 +106,7 @@ const putFood: ReqHandler = async (req, res, next) => {
       message: responseMessages.success.put,
     });
   } catch (error) {
-    if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code === "P2025"
-    ) {
+    if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
       return res.status(404).json({
         message: responseMessages.error.notFound,
       });
@@ -134,10 +132,7 @@ const deleteFood: ReqHandler = async (req, res, next) => {
       message: responseMessages.success.delete,
     });
   } catch (error) {
-    if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code === "P2025"
-    ) {
+    if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
       return res.status(404).json({
         message: responseMessages.error.notFound,
       });
