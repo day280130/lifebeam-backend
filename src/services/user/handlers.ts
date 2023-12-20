@@ -27,6 +27,11 @@ const postUser: RequestHandler = async (req, res, next) => {
       message: responseMessages.success.post,
     });
   } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError && error.code === "P2002") {
+      return res.status(409).json({
+        message: "this user is already registered in database",
+      });
+    }
     next(error);
   }
 };
@@ -81,10 +86,7 @@ const putUser: RequestHandler = async (req, res, next) => {
       message: responseMessages.success.put,
     });
   } catch (error) {
-    if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code === "P2025"
-    ) {
+    if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
       return res.status(404).json({
         message: responseMessages.error.notFound,
       });
@@ -109,10 +111,7 @@ const deleteUser: RequestHandler = async (req, res, next) => {
       message: responseMessages.success.delete,
     });
   } catch (error) {
-    if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code === "P2025"
-    ) {
+    if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
       return res.status(404).json({
         message: responseMessages.error.notFound,
       });
