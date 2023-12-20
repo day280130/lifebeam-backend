@@ -16,7 +16,7 @@ const postBiWeekly: ReqHandler = async (req, res, next) => {
         message: responseMessages.error.reqBody,
       });
     }
-    inputBody.data.weekTime;
+
     await prisma.biWeekly.create({
       data: {
         ...inputBody.data,
@@ -27,6 +27,11 @@ const postBiWeekly: ReqHandler = async (req, res, next) => {
       message: responseMessages.success.post,
     });
   } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError && error.code === "P2003") {
+      return res.status(400).json({
+        message: "user is not registered in database",
+      });
+    }
     next(error);
   }
 };
