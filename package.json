@@ -2,11 +2,11 @@
   "name": "lifebeam-backend",
   "version": "1.0.0",
   "description": "lifebeam's backend api",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
   "type": "module",
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js --format=esm --packages=external",
-    "start": "node dist/index.js",
+    "build": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.cjs --format=esm",
+    "start": "node dist/index.cjs",
     "dev": "npx tsx watch src/index.ts",
     "cert-generate": "cd ./cert && openssl pkcs12 -export -out client-identity.p12 -inkey client-key.pem -in client-cert.pem -passin pass:PASSWORD -passout pass:PASSWORD && cd ..",
     "gcp-build": "npm run cert-generate && npx prisma generate && npx prisma migrate deploy && npm run build"
