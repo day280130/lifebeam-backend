@@ -9,6 +9,7 @@ import { dailyRouters } from "@/services/daily/router";
 import { foodRouters } from "./services/food/router";
 import { exerciseRouters } from "./services/exercise/router";
 import { userRouters } from "./services/user/router";
+import { biWeeklyRouters } from "./services/bi-weekly/router";
 
 // create express instance
 const app = express();
@@ -33,6 +34,7 @@ app.use(dailyRouters);
 app.use(foodRouters);
 app.use(exerciseRouters);
 app.use(userRouters);
+app.use(biWeeklyRouters);
 
 // basic endpoints
 app.get("/", (_req, res) =>
@@ -52,9 +54,7 @@ app.use(errorHandler);
 // run express
 const port = parseInt(process.env.PORT ?? "0");
 if (port === 0) {
-  throw new Error(
-    "PORT not defined. Please define port in environment variables"
-  );
+  throw new Error("PORT not defined. Please define port in environment variables");
 }
 app.listen(port, () => {
   console.log(`Server started at port: ${port}`);
