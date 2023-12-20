@@ -27,10 +27,17 @@ const postBiWeekly: ReqHandler = async (req, res, next) => {
       message: responseMessages.success.post,
     });
   } catch (error) {
-    if (error instanceof PrismaClientKnownRequestError && error.code === "P2003") {
-      return res.status(400).json({
-        message: "user is not registered in database",
-      });
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === "P2003") {
+        return res.status(400).json({
+          message: "user is not registered in database",
+        });
+      }
+      if (error.code === "P2002") {
+        return res.status(409).json({
+          message: "entry for this use at this weekTime already exist, use PUT instead",
+        });
+      }
     }
     next(error);
   }
