@@ -25,6 +25,37 @@ const postExercise: ReqHandler = async (req, res, next) => {
   }
 };
 
+const getExercises: ReqHandler = async (req, res, next) => {
+  try {
+    const reqQueries = exerciseSchemas.queries.safeParse(req.query);
+    if (!reqQueries.success) {
+      return res.status(400).json({
+        message: responseMessages.error.reqQueries,
+      });
+    }
+
+    const exercises = await prisma.exercise.findMany({
+      select: { id: true, name: true, unit: true, calorieBurned: true },
+      skip: reqQueries.data.page * reqQueries.data.limit,
+      take: reqQueries.data.limit,
+    });
+    const exercisesCount = await prisma.exercise.count();
+    const maxPage =
+      exercisesCount === 0 ? exercisesCount : Math.ceil(exercisesCount / reqQueries.data.limit) - 1;
+
+    return res.status(200).json({
+      message: responseMessages.success.getAll,
+      exercises,
+      pagination: {
+        ...reqQueries.data,
+        maxPage,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getExercise: ReqHandler = async (req, res, next) => {
   try {
     const paramId = exerciseSchemas.params.safeParse(req.params);
@@ -65,7 +96,7 @@ const putExercise: ReqHandler = async (req, res, next) => {
       });
     }
 
-    const inputBody = exerciseSchemas.postBody.safeParse(req.body);
+    const inputBody = exerciseSchemas.putBody.safeParse(req.body);
     if (!inputBody.success) {
       return res.status(400).json({
         message: responseMessages.error.reqBody,
@@ -81,10 +112,7 @@ const putExercise: ReqHandler = async (req, res, next) => {
       message: responseMessages.success.put,
     });
   } catch (error) {
-    if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code === "P2025"
-    ) {
+    if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
       return res.status(404).json({
         message: responseMessages.error.notFound,
       });
@@ -110,10 +138,7 @@ const deleteExercise: ReqHandler = async (req, res, next) => {
       message: responseMessages.success.delete,
     });
   } catch (error) {
-    if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code === "P2025"
-    ) {
+    if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
       return res.status(404).json({
         message: responseMessages.error.notFound,
       });
@@ -124,6 +149,7 @@ const deleteExercise: ReqHandler = async (req, res, next) => {
 
 export const exerciseHandlers = {
   postExercise,
+  getExercises,
   getExercise,
   putExercise,
   deleteExercise,
