@@ -50,7 +50,7 @@ const postActivity: ReqHandler = async (req, res, next) => {
       if (error.code === "P2002") {
         return res.status(400).json({
           message:
-            "diet entry for this user at provided dateTime has already registered in database",
+            "activity entry for this user at provided dateTime has already registered in database",
           error,
         });
       }
