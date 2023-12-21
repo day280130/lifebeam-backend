@@ -10,6 +10,7 @@ import { foodRouters } from "./services/food/router";
 import { exerciseRouters } from "./services/exercise/router";
 import { userRouters } from "./services/user/router";
 import { biWeeklyRouters } from "./services/bi-weekly/router";
+import { predictRouters } from "@/services/predict/router";
 
 // create express instance
 const app = express();
@@ -35,6 +36,7 @@ app.use(foodRouters);
 app.use(exerciseRouters);
 app.use(userRouters);
 app.use(biWeeklyRouters);
+app.use(predictRouters);
 
 // basic endpoints
 app.get("/", (_req, res) =>
