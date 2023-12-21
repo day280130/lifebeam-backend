@@ -124,8 +124,8 @@ export const predictHandler: ReqHandler = async (req, res, next) => {
       clu: calorieToUnder,
       bmi: BMI,
       bmr: BMR,
-      cintake: avgCalIntake,
-      cburned: avgCalBurned,
+      cintake: isNaN(avgCalIntake) ? 0 : avgCalIntake,
+      cburned: isNaN(avgCalBurned) ? 0 : avgCalBurned,
       eused: energyNeeded,
     });
     const calorieOffsetFetch = await fetch(`${modelUrl}/predict/calorie-offset`, {
